@@ -32,9 +32,11 @@ void destroyMatrix(struct matrix* mat) {
 }
 
 // Prints the matrix
-void printMatrix(struct matrix* mat) {
+void printMatrix(struct matrix* mat,char* desc) {
 	uint32 i;
 	uint32 j;
+	printf("\n --------------------------------------- \n");
+	printf("\t%s",desc);
 	printf("\n --------------------------------------- \n");
 	for (i = 0; i < mat->numberOfRows; ++i) {
 		for (j = 0; j < mat->numberOfColumns; ++j) {
@@ -61,6 +63,22 @@ struct matrix* subtractMatrices(struct matrix* mat1, struct matrix* mat2) {
 	}
 
 	return output;
+}
+
+void ScalarMatrixDivision(struct matrix* mat, float divisor) {
+	for (int i = 0; i < mat->numberOfRows; ++i) {
+			for (int j = 0; j < mat->numberOfColumns; ++j) {
+				MAT(mat,i,j) = MAT(mat,i,j)/divisor;
+			}
+	}
+}
+
+void ScalarMatrixMultiplication(struct matrix* mat, float multiplier){
+	for (int i = 0; i < mat->numberOfRows; ++i) {
+				for (int j = 0; j < mat->numberOfColumns; ++j) {
+					MAT(mat,i,j) = MAT(mat,i,j)*multiplier;
+				}
+		}
 }
 
 void initMatrix(struct matrix* mat, void* values) {

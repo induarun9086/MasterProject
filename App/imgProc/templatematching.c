@@ -74,15 +74,15 @@ int main(int argc, char* argv[])
 	}
 
 #ifdef DEBUG
-	printMatrix(image);
+	printMatrix(image,"Loaded image");
 #endif
 
 	// For testing purpose - Initialised a 5x5 matrix as filter mask
-	float filterValues[5][5] = {{1.0, -1.0, 3.0, 3.0, 3.0},
-								{-1.0, 5.0, -1.0 , -1.0, -1.0},
-								{0.0,  -1.0 , 0.0 ,0.0 ,0.0 },
-								{0.0, -1.0, 0.0, 0.0, 0.0},
-								{0.0, -1.0,  0.0 , 0.0, 0.0}};
+	float filterValues[5][5] = {{1.0, 1.0, 1.0,  1.0, 1.0},
+								{1.0, 1.0, 1.0,  1.0, 1.0},
+								{1.0, 1.0,-24.0, 1.0, 1.0 },
+								{1.0, 1.0, 1.0,  1.0, 1.0},
+								{1.0, 1.0, 1.0,  1.0, 1.0}};
 
 	initMatrix(filter, (void*)filterValues);
 
@@ -92,15 +92,18 @@ int main(int argc, char* argv[])
 	// Mode - Zero padding/Symmetric/Circular/Replicate
 	filteredImage = imfilter(image,filter,CORRELATION_OPERATION,MODE_CIRCULAR);
 
-	destroyMatrix(filteredImage);
+	filteredImage = imsharpen(filteredImage);
 
-	filteredImage = imsharpen(image);
+	printMatrix(filteredImage,"Sharpened image");
 
-	printMatrix(filteredImage);
+	struct matrix* adjustedImage = imadjust(filteredImage,0,0.69,0,1,1);
+
+	printMatrix(adjustedImage,"Adjusted image");
 
 	destroyMatrix(image);
 	destroyMatrix(filter);
 	destroyMatrix(filteredImage);
+	destroyMatrix(adjustedImage);
 
 	return 0;
 }

@@ -25,4 +25,6 @@ float getPixelValue(struct matrix* image,uint32 imgPosX,uint32 imgPosY,uint32 fi
 
 struct matrix* imsharpen(struct matrix* image);
 
+struct matrix* imadjust(struct matrix* image,float low_in,float high_in,float low_out,float high_out,float gamma);
+
 #endif /* UTILITIES_IMFILTER_H_ */

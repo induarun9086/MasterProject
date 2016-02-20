@@ -22,9 +22,13 @@ struct matrix* createMatrix(uint32 numberOfRows,uint32 numberOfColumns);
 
 void destroyMatrix(struct matrix* mat);
 
-void printMatrix(struct matrix* mat);
+void printMatrix(struct matrix* mat,char* desc);
 
 struct matrix* subtractMatrices(struct matrix* mat1,struct matrix* mat2);
+
+void ScalarMatrixDivision(struct matrix* mat, float divisor);
+
+void ScalarMatrixMultiplication(struct matrix* mat, float multiplier);
 
 void initMatrix(struct matrix* mat, void* values);
 

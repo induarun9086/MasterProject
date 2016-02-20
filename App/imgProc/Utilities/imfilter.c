@@ -20,7 +20,7 @@ struct matrix* imfilter(struct matrix* image,struct matrix* filter,uint8 operati
 #ifdef DEBUG
 	//For debugging initialised a temporary matrix with boundary padded
 	// according to the mode given
-	struct matrix* tempMatrix = createMatrix(filter->numberOfRows,filter->numberOfColumns);
+	//struct matrix* tempMatrix = createMatrix(filter->numberOfRows,filter->numberOfColumns);
 #endif
 	//Iterate the rows of the image
 	for (uint16 i = 0; i < image->numberOfRows; ++i) {
@@ -34,7 +34,7 @@ struct matrix* imfilter(struct matrix* image,struct matrix* filter,uint8 operati
 						// get the pixel value for the given filter mask position(l,m)
 						tempPixelValue = getPixelValue(image,i,j,l-(filter->numberOfRows/2),m-(filter->numberOfColumns/2),mode);
 #ifdef DEBUG
-						MAT(tempMatrix,l,m) = tempPixelValue;
+						//MAT(tempMatrix,l,m) = tempPixelValue;
 #endif
 						// for convolution operation the filter should be inverted
 						if(operation == CONVOLUTION_OPERATION)
@@ -49,7 +49,7 @@ struct matrix* imfilter(struct matrix* image,struct matrix* filter,uint8 operati
 					}
 				}
 #ifdef DEBUG
-				printMatrix(tempMatrix);
+				//printMatrix(tempMatrix,"temporary Matrix");
 #endif
 				MAT(filteredImage,i,j) = tempResult;
 
@@ -57,7 +57,7 @@ struct matrix* imfilter(struct matrix* image,struct matrix* filter,uint8 operati
 	}
 
 #ifdef DEBUG
-	printMatrix(filteredImage);
+	printMatrix(filteredImage, "filterd Image");
 #endif
 
 	return filteredImage;
@@ -135,6 +135,9 @@ struct matrix* imsharpen(struct matrix* image)
 
 	initMatrix(filter, (void*)laplacianFilter);
 
+	printMatrix(filter,"filter");
+	printMatrix(image,"image");
+
 	struct matrix* filteredImage = imfilter(image,filter,CORRELATION_OPERATION,MODE_PAD_ZERO);
 
 	struct matrix* sharpenedImage = subtractMatrices(image,filteredImage);
@@ -143,6 +146,50 @@ struct matrix* imsharpen(struct matrix* image)
 	destroyMatrix(filteredImage);
 
 	return sharpenedImage;
+}
+
+
+struct matrix* imadjust(struct matrix* image,float low_in,float high_in,float low_out,float high_out,float gamma)
+{
+	struct matrix* adjustedImage = createMatrix(image->numberOfRows,
+												image->numberOfColumns);
+	float maxIntensity = 0;
+	float minIntensity = 0;
+	for (int i = 0; i < image->numberOfRows; ++i) {
+		for (int j = 0; j < image->numberOfColumns; ++j) {
+				if(MAT(image,i,j) > maxIntensity)
+				{
+					maxIntensity = MAT(image,i,j);
+				}
+				if(MAT(image,i,j) < minIntensity)
+				{
+					minIntensity = MAT(image,i,j);
+				}
+			}
+		}
+	float oldRange = maxIntensity - minIntensity;
+
+	for (int i = 0; i < image->numberOfRows; ++i) {
+				for (int j = 0; j < image->numberOfColumns; ++j) {
+
+					//float temp = ((MAT(image,i,j) - minIntensity) / oldRange);
+					float temp = MAT(image,i,j);
+					if(temp < low_in)
+					{
+						MAT(adjustedImage,i,j) = low_out;
+					}
+					else if(temp > high_in)
+					{
+						MAT(adjustedImage,i,j) = high_out;
+					}
+					else
+					{
+						MAT(adjustedImage,i,j) = temp * gamma;
+					}
+				}
+	}
+
+	return adjustedImage;
 }
 
 
