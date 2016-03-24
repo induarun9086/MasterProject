@@ -7,20 +7,24 @@
 
 #include "imfilter.h"
 
-float laplacianFilter[3][3] = {{0.1667,0.6667,0.1667},
-							   {0.6667,-3.3333,0.6667},
-							   {0.1667,0.6667,0.1667}};
+float laplacianFilter[3][3] = {{0.1667, 0.6667, 0.1667},
+                               {0.6667, -3.333, 0.6667},
+                               {0.1667, 0.6667, 0.1667}};
 
-struct matrix* imfilter(struct matrix* image,struct matrix* filter,uint8 operation,uint8 mode){
+float gaussianFilter[3][3] = {{0.0625, 0.1250, 0.0625},
+                              {0.1250, 0.2500, 0.1250},
+                              {0.0625, 0.1250, 0.0625}};
+
+PMAT imfilter(PMAT image, PMAT filter, uint8 operation, uint8 mode) {
 
 	float tempResult ;
 	float tempPixelValue = 0.0;
-	struct matrix* filteredImage = createMatrix(image->numberOfRows,image->numberOfColumns);
+	PMAT filteredImage = createMatrix(image->numberOfRows,image->numberOfColumns);
 
 #ifdef DEBUG
 	//For debugging initialised a temporary matrix with boundary padded
 	// according to the mode given
-	//struct matrix* tempMatrix = createMatrix(filter->numberOfRows,filter->numberOfColumns);
+	//PMAT tempMatrix = createMatrix(filter->numberOfRows,filter->numberOfColumns);
 #endif
 	//Iterate the rows of the image
 	for (uint16 i = 0; i < image->numberOfRows; ++i) {
@@ -59,14 +63,14 @@ struct matrix* imfilter(struct matrix* image,struct matrix* filter,uint8 operati
 #ifdef DEBUG
 	printMatrix(filteredImage, "filterd Image");
 #endif
+  
+  printf("Image filtering completed \n");
 
 	return filteredImage;
 }
 
-
-
-float getPixelValue(struct matrix* image,uint32 imgPosX,uint32 imgPosY,
-		uint32 filterPosX,uint32 filterPosY,uint8 mode)
+float getPixelValue(PMAT image,uint32 imgPosX,uint32 imgPosY,
+		                uint32 filterPosX,uint32 filterPosY,uint8 mode)
 {
 	float pixelValue = 0.0;
 	// add the image and filter position
@@ -115,6 +119,11 @@ float getPixelValue(struct matrix* image,uint32 imgPosX,uint32 imgPosY,
 
 				pixelValue = MAT(image,imgCurrentPosX,imgCurrentPosY);
 			}
+      /* MODE_PAD_ZERO */
+      else
+      {
+        pixelValue = 0.0;
+      }
 	}
 	//  If the postion is inside the image bound,use the current position's value
 	else
@@ -126,11 +135,45 @@ float getPixelValue(struct matrix* image,uint32 imgPosX,uint32 imgPosY,
 
 }
 
+void normalizeImage(PMAT img)
+{
+  float mean = 0;
+  float sd = 0;
+  
+  //Iterate the rows of the image
+	for (uint16 i = 0; i < img->numberOfRows; ++i) {
+		//Iterate the columns of the image
+		for (uint16 j = 0; j < img->numberOfColumns; ++j) {
+      mean = mean + MAT(img, i, j);
+    }
+  }
+  
+  mean = mean / (img->numberOfColumns * img->numberOfRows);
+  
+  //Iterate the rows of the image
+	for (uint16 i = 0; i < img->numberOfRows; ++i) {
+		//Iterate the columns of the image
+		for (uint16 j = 0; j < img->numberOfColumns; ++j) {
+      sd = sd + ((MAT(img, i, j) - mean) * (MAT(img, i, j) - mean));
+    }
+  }
+  
+  sd = sqrt(sd);
+  
+  //Iterate the rows of the image
+	for (uint16 i = 0; i < img->numberOfRows; ++i) {
+		//Iterate the columns of the image
+		for (uint16 j = 0; j < img->numberOfColumns; ++j) {
+      MAT(img, i, j) = (MAT(img, i, j) - mean) / sd;
+    }
+  }
+}
+
 // sharpening image - apply laplacian filter and
 //subtract the resultant image from the original image
-struct matrix* imsharpen(struct matrix* image)
+PMAT imsharpen(PMAT image)
 {
-	struct matrix* filter;
+	PMAT filter;
 	filter = createMatrix(3,3);
 
 	initMatrix(filter, (void*)laplacianFilter);
@@ -138,58 +181,31 @@ struct matrix* imsharpen(struct matrix* image)
 	printMatrix(filter,"filter");
 	printMatrix(image,"image");
 
-	struct matrix* filteredImage = imfilter(image,filter,CORRELATION_OPERATION,MODE_PAD_ZERO);
+	PMAT filteredImage = imfilter(image, filter, CORRELATION_OPERATION, MODE_PAD_ZERO);
 
-	struct matrix* sharpenedImage = subtractMatrices(image,filteredImage);
+	PMAT sharpenedImage = subtractMatrices(image, filteredImage);
 
-	destroyMatrix(filter);
-	destroyMatrix(filteredImage);
+	destroyMatrix(filter, "");
+	destroyMatrix(filteredImage, "");
 
 	return sharpenedImage;
 }
 
-
-struct matrix* imadjust(struct matrix* image,float low_in,float high_in,float low_out,float high_out,float gamma)
+PMAT imblur(PMAT image)
 {
-	struct matrix* adjustedImage = createMatrix(image->numberOfRows,
-												image->numberOfColumns);
-	float maxIntensity = 0;
-	float minIntensity = 0;
-	for (int i = 0; i < image->numberOfRows; ++i) {
-		for (int j = 0; j < image->numberOfColumns; ++j) {
-				if(MAT(image,i,j) > maxIntensity)
-				{
-					maxIntensity = MAT(image,i,j);
-				}
-				if(MAT(image,i,j) < minIntensity)
-				{
-					minIntensity = MAT(image,i,j);
-				}
-			}
-		}
-	float oldRange = maxIntensity - minIntensity;
+  PMAT filter;
+	filter = createMatrix(3,3);
 
-	for (int i = 0; i < image->numberOfRows; ++i) {
-				for (int j = 0; j < image->numberOfColumns; ++j) {
+	initMatrix(filter, (void*)gaussianFilter);
 
-					//float temp = ((MAT(image,i,j) - minIntensity) / oldRange);
-					float temp = MAT(image,i,j);
-					if(temp < low_in)
-					{
-						MAT(adjustedImage,i,j) = low_out;
-					}
-					else if(temp > high_in)
-					{
-						MAT(adjustedImage,i,j) = high_out;
-					}
-					else
-					{
-						MAT(adjustedImage,i,j) = temp * gamma;
-					}
-				}
-	}
+	printMatrix(filter,"filter");
+	printMatrix(image,"image");
 
-	return adjustedImage;
+	PMAT blurredImage = imfilter(image, filter, CORRELATION_OPERATION, MODE_PAD_ZERO);
+
+	destroyMatrix(filter, "");
+
+	return blurredImage;
 }
 
 

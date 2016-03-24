@@ -18,4 +18,9 @@
 
 #define TEMPLATEMATCHING_IMAGE_LENGTH (10000000)
 
+#define RUN_MODE_UNDEF           (0)
+#define RUN_MODE_DO_TESTS        (1)
+#define RUN_MODE_SEPERATE_OBJS   (2)
+#define RUN_MODE_FIND_GN_OBJ     (3)
+
 #endif /* TEMPLATEMATCHING_H_ */
