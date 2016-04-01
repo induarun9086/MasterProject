@@ -73,7 +73,7 @@ int main(int argc, char* argv[])
       //dumpMatrixToFile(opImage, "image.txt", "%05.0f ", "      ");
 
       for(int i = 0; ((i <= 256) && (opObjs[i] != 0)); i++) {
-        sprintf(&opFileName[0], "./output_%02d_%03d.bmp", runSeg, i);
+        sprintf(&opFileName[0], "/home/pi/App/output_%02d_%03d.bmp", runSeg, i);
         writeAsBMP(&opFileName[0], opObjs[i], &imageData[0]);
         destroyMatrix(opObjs[i], "");
       }
@@ -81,7 +81,7 @@ int main(int argc, char* argv[])
       destroyMatrix(oriImg, "");
       
 #if ((defined _WIN32) || (defined _WIN64) || (defined CYGWIN))
-      system("cygstart ./output_000.bmp");
+      system("cygstart /home/pi/App/output_000.bmp");
 #endif
     } else {
       printf(" File couldn't be opened %s, err:%d\n", &argv[2][0], err);
@@ -127,7 +127,7 @@ int main(int argc, char* argv[])
       int height = scaledfilter->numberOfRows * scaleFactor;
       
       PMAT markedImg = markBoundaryInImage(oriImg, maxVal, matchPos, width, height);
-      sprintf(&opFileName[0], "./markedImg_%02d.bmp", runSeg);
+      sprintf(&opFileName[0], "/home/pi/App/markedImg_%02d.bmp", runSeg);
       writeAsBMP(&opFileName[0], markedImg, &imageData[0]);
       
       destroyMatrix(scaledScene, "scene");
@@ -136,7 +136,7 @@ int main(int argc, char* argv[])
       destroyMatrix(markedImg, "");
             
 #if ((defined _WIN32) || (defined _WIN64) || (defined CYGWIN))
-      system("cygstart ./markedImg.bmp");
+      system("cygstart /home/pi/App/markedImg.bmp");
 #endif
     } else {
       printf("File open failed: %d for files %s and %s\n", err, &argv[3][0], &argv[4][0]);
