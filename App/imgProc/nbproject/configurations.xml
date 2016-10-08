@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="95">
+  <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
+    <logicalFolder name="fileOps" displayName="fileOps" projectFiles="true">
+      <itemPath>fileOps/bmp.c</itemPath>
+      <itemPath>fileOps/bmp.h</itemPath>
+    </logicalFolder>
+    <logicalFolder name="imgOps" displayName="imgOps" projectFiles="true">
+      <itemPath>imgOps/RGBToGray.c</itemPath>
+      <itemPath>imgOps/RGBToGray.h</itemPath>
+      <itemPath>imgOps/imfilter.c</itemPath>
+      <itemPath>imgOps/imfilter.h</itemPath>
+      <itemPath>imgOps/imgUtils.c</itemPath>
+      <itemPath>imgOps/imgUtils.h</itemPath>
+    </logicalFolder>
+    <logicalFolder name="test" displayName="test" projectFiles="true">
+      <itemPath>test/test.c</itemPath>
+      <itemPath>test/test.h</itemPath>
+    </logicalFolder>
+    <logicalFolder name="utils" displayName="utils" projectFiles="true">
+      <itemPath>utils/matrix.c</itemPath>
+      <itemPath>utils/matrix.h</itemPath>
+      <itemPath>utils/misc.c</itemPath>
+      <itemPath>utils/misc.h</itemPath>
+    </logicalFolder>
+    <logicalFolder name="TestFiles"
+                   displayName="Test Files"
+                   projectFiles="false"
+                   kind="TEST_LOGICAL_FOLDER">
+    </logicalFolder>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false"
+                   kind="IMPORTANT_FILES_FOLDER">
+    </logicalFolder>
+    <itemPath>Makefile</itemPath>
+    <itemPath>templatematching.c</itemPath>
+    <itemPath>templatematching.h</itemPath>
+  </logicalFolder>
+  <sourceRootList>
+    <Elem>Utilities</Elem>
+    <Elem>test</Elem>
+    <Elem>fileOps</Elem>
+    <Elem>imgOps</Elem>
+    <Elem>utils</Elem>
+  </sourceRootList>
+  <projectmakefile>Makefile</projectmakefile>
+  <confs>
+    <conf name="Debug" type="1">
+      <toolsSet>
+        <compilerSet>default</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
+      </toolsSet>
+      <compileType>
+        <cTool>
+          <standard>3</standard>
+        </cTool>
+        <ccTool>
+          <standard>8</standard>
+        </ccTool>
+      </compileType>
+      <item path="Makefile" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="fileOps/bmp.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="fileOps/bmp.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="imgOps/RGBToGray.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="imgOps/RGBToGray.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="imgOps/imfilter.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="imgOps/imfilter.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="imgOps/imgUtils.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="imgOps/imgUtils.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="templatematching.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="templatematching.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="test/test.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="test/test.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="utils/matrix.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="utils/matrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="utils/misc.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="utils/misc.h" ex="false" tool="3" flavor2="0">
+      </item>
+    </conf>
+    <conf name="Release" type="1">
+      <toolsSet>
+        <compilerSet>default</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
+      </toolsSet>
+      <compileType>
+        <cTool>
+          <developmentMode>5</developmentMode>
+        </cTool>
+        <ccTool>
+          <developmentMode>5</developmentMode>
+        </ccTool>
+        <fortranCompilerTool>
+          <developmentMode>5</developmentMode>
+        </fortranCompilerTool>
+        <asmTool>
+          <developmentMode>5</developmentMode>
+        </asmTool>
+      </compileType>
+      <item path="Makefile" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="fileOps/bmp.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="fileOps/bmp.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="imgOps/RGBToGray.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="imgOps/RGBToGray.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="imgOps/imfilter.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="imgOps/imfilter.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="imgOps/imgUtils.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="imgOps/imgUtils.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="templatematching.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="templatematching.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="test/test.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="test/test.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="utils/matrix.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="utils/matrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="utils/misc.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="utils/misc.h" ex="false" tool="3" flavor2="0">
+      </item>
+    </conf>
+  </confs>
+</configurationDescriptor>
