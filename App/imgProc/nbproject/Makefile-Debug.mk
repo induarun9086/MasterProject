@@ -72,42 +72,42 @@ ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/imgproc.exe: ${OBJECTFILES}
 ${OBJECTDIR}/fileOps/bmp.o: fileOps/bmp.c 
 	${MKDIR} -p ${OBJECTDIR}/fileOps
 	${RM} "$@.d"
-	$(COMPILE.c) -g -std=c99 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/fileOps/bmp.o fileOps/bmp.c
+	$(COMPILE.c) -g -DPC_SIMU -std=c99 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/fileOps/bmp.o fileOps/bmp.c
 
 ${OBJECTDIR}/imgOps/RGBToGray.o: imgOps/RGBToGray.c 
 	${MKDIR} -p ${OBJECTDIR}/imgOps
 	${RM} "$@.d"
-	$(COMPILE.c) -g -std=c99 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/imgOps/RGBToGray.o imgOps/RGBToGray.c
+	$(COMPILE.c) -g -DPC_SIMU -std=c99 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/imgOps/RGBToGray.o imgOps/RGBToGray.c
 
 ${OBJECTDIR}/imgOps/imfilter.o: imgOps/imfilter.c 
 	${MKDIR} -p ${OBJECTDIR}/imgOps
 	${RM} "$@.d"
-	$(COMPILE.c) -g -std=c99 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/imgOps/imfilter.o imgOps/imfilter.c
+	$(COMPILE.c) -g -DPC_SIMU -std=c99 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/imgOps/imfilter.o imgOps/imfilter.c
 
 ${OBJECTDIR}/imgOps/imgUtils.o: imgOps/imgUtils.c 
 	${MKDIR} -p ${OBJECTDIR}/imgOps
 	${RM} "$@.d"
-	$(COMPILE.c) -g -std=c99 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/imgOps/imgUtils.o imgOps/imgUtils.c
+	$(COMPILE.c) -g -DPC_SIMU -std=c99 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/imgOps/imgUtils.o imgOps/imgUtils.c
 
 ${OBJECTDIR}/templatematching.o: templatematching.c 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.c) -g -std=c99 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/templatematching.o templatematching.c
+	$(COMPILE.c) -g -DPC_SIMU -std=c99 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/templatematching.o templatematching.c
 
 ${OBJECTDIR}/test/test.o: test/test.c 
 	${MKDIR} -p ${OBJECTDIR}/test
 	${RM} "$@.d"
-	$(COMPILE.c) -g -std=c99 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/test/test.o test/test.c
+	$(COMPILE.c) -g -DPC_SIMU -std=c99 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/test/test.o test/test.c
 
 ${OBJECTDIR}/utils/matrix.o: utils/matrix.c 
 	${MKDIR} -p ${OBJECTDIR}/utils
 	${RM} "$@.d"
-	$(COMPILE.c) -g -std=c99 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/utils/matrix.o utils/matrix.c
+	$(COMPILE.c) -g -DPC_SIMU -std=c99 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/utils/matrix.o utils/matrix.c
 
 ${OBJECTDIR}/utils/misc.o: utils/misc.c 
 	${MKDIR} -p ${OBJECTDIR}/utils
 	${RM} "$@.d"
-	$(COMPILE.c) -g -std=c99 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/utils/misc.o utils/misc.c
+	$(COMPILE.c) -g -DPC_SIMU -std=c99 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/utils/misc.o utils/misc.c
 
 # Subprojects
 .build-subprojects:

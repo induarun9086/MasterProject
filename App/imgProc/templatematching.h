@@ -22,5 +22,6 @@
 #define RUN_MODE_DO_TESTS        (1)
 #define RUN_MODE_SEPERATE_OBJS   (2)
 #define RUN_MODE_FIND_GN_OBJ     (3)
+#define RUN_MODE_MARK_OBJS       (4)
 
 #endif /* TEMPLATEMATCHING_H_ */

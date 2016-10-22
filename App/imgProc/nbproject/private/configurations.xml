@@ -13,6 +13,8 @@
         <gdb_interceptlist>
           <gdbinterceptoptions gdb_all="false" gdb_unhandled="true" gdb_unexpected="true"/>
         </gdb_interceptlist>
+        <gdb_signals>
+        </gdb_signals>
         <gdb_options>
           <DebugOptions>
           </DebugOptions>
@@ -24,18 +26,18 @@
       </nativedebugger>
       <runprofile version="9">
         <runcommandpicklist>
-          <runcommandpicklistitem>"${OUTPUT_PATH}" 3 0 ./shapes1.bmp ./output_00_001.bmp</runcommandpicklistitem>
-          <runcommandpicklistitem>"${OUTPUT_PATH}" 3 1 ./shapes1.bmp ./output_01_002.bmp</runcommandpicklistitem>
-          <runcommandpicklistitem>"${OUTPUT_PATH}" 3 1 ./shapes2.bmp ./output_01_001.bmp</runcommandpicklistitem>
-          <runcommandpicklistitem>"${OUTPUT_PATH}" 2 1 ./test.bmp ./output_01_001.bmp</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" 2 0 ./2.bmp ./output_01_001.bmp</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" 2 0 ./test.bmp ./output_01_001.bmp</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" 2 0 ./3.bmp ./output_01_001.bmp</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" 2 0 ./4.bmp ./output_01_001.bmp</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" 2 0 ./seg_2.bmp ./output_01_001.bmp</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" 2 0 ./seg_1.bmp ./output_01_001.bmp</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" 2 0 ./temp/seg_3.bmp ./temp/output_01_001.bmp</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" 2 0 ./temp/seg_2.bmp ./temp/output_01_001.bmp</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" 2 0 ./temp/seg_1.bmp ./temp/output_01_001.bmp</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" 2 0 ./temp/seg_21.bmp ./temp/output_01_001.bmp</runcommandpicklistitem>
         </runcommandpicklist>
-        <runcommand>"${OUTPUT_PATH}" 2 0 ./seg_1.bmp ./output_01_001.bmp</runcommand>
+        <runcommand>"${OUTPUT_PATH}" 2 0 ./temp/seg_21.bmp ./temp/output_01_001.bmp</runcommand>
         <rundir></rundir>
         <buildfirst>true</buildfirst>
         <console-type>2</console-type>

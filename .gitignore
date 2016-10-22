@@ -1,8 +1,10 @@
 [Bb]ackup
 Docs
 Tools
+[Ss]cripts
 .DS_Store
 .dep.inc
 [Bb]uild
 [Dd]ist
 [Tt]emp
+App/imgProc/imgproc.exe.stackdump

@@ -10,6 +10,7 @@
 
 #include "../utils/misc.h"
 #include "../utils/matrix.h"
+#include "../imgOps/imfilter.h"
 
 PMAT removeBG(PMAT image);
 PMAT imadjust(PMAT image, float low_in, float high_in, float low_out, float high_out, float gamma);
@@ -22,5 +23,6 @@ PMAT seperateObjsFromImage(PMAT binImage, int* numObjsFound);
 PMAT * markObjsInImage(PMAT oriImg, PMAT objImg, int numObjsFound);
 PMAT scaleDown(PMAT img, int widthScale, int heightScale);
 PMAT markBoundaryInImage(PMAT img, float maxVal, POS center, int width, int height);
+PMAT sobelEdgeFilter(PMAT img);
 
 #endif /* IMGOPS_IMGUTILS_H_ */

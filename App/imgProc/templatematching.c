@@ -7,11 +7,23 @@
 
 #include "templatematching.h"
 
+#ifdef PC_SIMU
+#define OP_PATH_PREFIX "./temp/"
+#else
+#define OP_PATH_PREFIX "/home/pi/App/"
+#endif
+
 uint8 imageData[TEMPLATEMATCHING_IMAGE_LENGTH];
 uint8 filterData[TEMPLATEMATCHING_IMAGE_LENGTH];
 
-uint8 silentRun = 1;
+uint8 silentRun  = 1;
+uint8 verboseLvl = 0;
+
+#ifdef PC_SIMU
+uint8 showImages = 1;
+#else
 uint8 showImages = 0;
+#endif
 
 int main(int argc, char* argv[])
 {
@@ -28,7 +40,8 @@ int main(int argc, char* argv[])
     runMode = atoi(&argv[1][0]);
     runSeg = atoi(&argv[2][0]);
     
-    if(runMode == RUN_MODE_SEPERATE_OBJS) {
+    if((runMode == RUN_MODE_SEPERATE_OBJS) ||
+       (runMode == RUN_MODE_MARK_OBJS)) {
       if(argc < 4) {
         runMode = RUN_MODE_UNDEF;
       }
@@ -40,7 +53,8 @@ int main(int argc, char* argv[])
   }
   
   /* Find the objects in the given scene */
-  if(runMode == RUN_MODE_SEPERATE_OBJS) {
+  if((runMode == RUN_MODE_SEPERATE_OBJS) ||
+     (runMode == RUN_MODE_MARK_OBJS)) {
     /* Open the given scene BMP file  */
     err = openBmpFile(&argv[3][0], &imgHdr, &imageData[0]);
     if(err  == 0) {
@@ -51,37 +65,42 @@ int main(int argc, char* argv[])
       PMAT oriImg = convertRGBToMatrix(imageData, imgHdr.imageLength,
                                                   imgHdr.imageWidth,
                                                   imgHdr.imageHeight);
-
-      /* Begin image processing */
-      PMAT contrastImg = imadjust(gray, 60, 180, 255, 0, 1); destroyMatrix(gray, "gray");
-      PMAT noBgImg = removeBG(contrastImg);  destroyMatrix(contrastImg, "contrastImg");
-      PMAT blurImg = imblur(noBgImg);  destroyMatrix(noBgImg, "noBgImg");
-      //PMAT sharpImg = imsharpen(blurImg); destroyMatrix(blurImg, "blurImg1");
-      //PMAT adjustedImg = imadjust(sharpImg, 0, 176, 0, 255, 1); destroyMatrix(sharpImg, "sharp1");
-      //sharpImg = imsharpen(adjustedImg); destroyMatrix(adjustedImg, "adjust1");
-      //adjustedImg = imadjust(sharpImg, 0, 210, 0, 255, 1); destroyMatrix(sharpImg, "sharp2");
-      float threshold = quantile(blurImg, 0.45); 
+      
+      /* Extract the edge */
+      PMAT edgeImg = sobelEdgeFilter(gray); destroyMatrix(gray, "gray");
+      /* Blur the image */
+      PMAT blurImg = imblur(edgeImg);  destroyMatrix(edgeImg, "edgeImg");
+      /* Find the threshold pixel value */
+      float threshold = quantile(blurImg, 0.21);
       printf("Threshold = %f\n", threshold);
-
+      /* Binarize the image based on the threshold */
       PMAT binImage = binarizeImage(blurImg, threshold); destroyMatrix(blurImg, "blurImg");
+      /* thicken the binary image */
       thickImage(binImage);
-
-      //PMAT opImage = imageFromBinInfo(binImage);
+      /* Separate the objects in the image */
       PMAT opImage = seperateObjsFromImage(binImage, &numObjs); destroyMatrix(binImage, "thickbin");
+      /* Mark boundaries around the separated images */
       PMAT * opObjs = markObjsInImage(oriImg, opImage, numObjs); destroyMatrix(opImage, "opImage"); 
 
-      //dumpMatrixToFile(opImage, "image.txt", "%05.0f ", "      ");
-
-      for(int i = 0; ((i <= 256) && (opObjs[i] != 0)); i++) {
-        sprintf(&opFileName[0], "/home/pi/App/output_%02d_%03d.bmp", runSeg, i);
-        writeAsBMP(&opFileName[0], opObjs[i], &imageData[0]);
-        destroyMatrix(opObjs[i], "");
+      if(runMode == RUN_MODE_MARK_OBJS) {
+        sprintf(&opFileName[0], OP_PATH_PREFIX"output_%02d.bmp", runSeg);
+        writeAsBMP(&opFileName[0], opObjs[0], &imageData[0]);
+        for(int i = 0; ((i <= 256) && (opObjs[i] != 0)); i++) {
+          destroyMatrix(opObjs[i], "");
+        }
+      } else {
+        /* Extract the individual objects and write as separate files */
+        for(int i = 0; ((i <= 256) && (opObjs[i] != 0)); i++) {
+          sprintf(&opFileName[0], OP_PATH_PREFIX"output_%02d_%03d.bmp", runSeg, i);
+          writeAsBMP(&opFileName[0], opObjs[i], &imageData[0]);
+          destroyMatrix(opObjs[i], "");
+        }
       }
 
       destroyMatrix(oriImg, "");
       
 #if ((defined _WIN32) || (defined _WIN64) || (defined CYGWIN))
-      system("cygstart /home/pi/App/output_000.bmp");
+      system("cygstart "OP_PATH_PREFIX"output_000.bmp");
 #endif
     } else {
       printf(" File couldn't be opened %s, err:%d\n", &argv[2][0], err);
@@ -107,27 +126,34 @@ int main(int argc, char* argv[])
                                                       filterHdr.imageWidth,
                                                       filterHdr.imageHeight);
       
-      PMAT scaledScene = scaleDown(scene, scaleFactor, scaleFactor);destroyMatrix(scene, "scene");
+      /* Scale down the input image and filter image to speed up processing */
+      PMAT scaledScene  = scaleDown(scene, scaleFactor, scaleFactor);destroyMatrix(scene, "scene");
       PMAT scaledfilter = scaleDown(filter, scaleFactor, scaleFactor);destroyMatrix(filter, "filter");
       
+      /* Normalize the image and filter */
       normalizeImage(scaledScene);
       normalizeImage(scaledfilter);
       
+      /* Correlate the image with filter and normalize the image */
       PMAT result = imfilter(scaledScene, scaledfilter, CORRELATION_OPERATION, MODE_PAD_ZERO);
       normalizeMatrix(result, -0.5, 0.5, 0, 255);
       
+      /* Get the maximum of the correlation */
       float maxVal = 0;
       POS matchPos = getMaxPos(result, &maxVal);
       printf("Given image section found at x:%d, y:%d\n", matchPos.x, matchPos.y);
       
+      /* Scale up the found image position */
       matchPos.x *= scaleFactor;
       matchPos.y *= scaleFactor;
       
-      int width = scaledfilter->numberOfColumns * scaleFactor;
+      /* Find the original size of the filter */
+      int width  = scaledfilter->numberOfColumns * scaleFactor;
       int height = scaledfilter->numberOfRows * scaleFactor;
       
+      /* Mark the found boundary in the original image */
       PMAT markedImg = markBoundaryInImage(oriImg, maxVal, matchPos, width, height);
-      sprintf(&opFileName[0], "/home/pi/App/markedImg_%02d.bmp", runSeg);
+      sprintf(&opFileName[0], OP_PATH_PREFIX"markedImg_%02d.bmp", runSeg);
       writeAsBMP(&opFileName[0], markedImg, &imageData[0]);
       
       destroyMatrix(scaledScene, "scene");
@@ -136,7 +162,7 @@ int main(int argc, char* argv[])
       destroyMatrix(markedImg, "");
             
 #if ((defined _WIN32) || (defined _WIN64) || (defined CYGWIN))
-      system("cygstart /home/pi/App/markedImg.bmp");
+      system("cygstart "OP_PATH_PREFIX"markedImg.bmp");
 #endif
     } else {
       printf("File open failed: %d for files %s and %s\n", err, &argv[3][0], &argv[4][0]);

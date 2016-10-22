@@ -7,7 +7,16 @@
 
 #include "imgUtils.h"
 
+extern uint8 verboseLvl;
+
 PMAT objs[257] = {0};
+
+float edgeX[3][3] = {{-0.5, 0, 0.5},
+                     {-1, 0, 1},
+                     {-0.5, 0, 0.5}};
+float edgeY[3][3] = {{-0.5, -1, -0.5},
+                     {0, 0, 0},
+                     {0.5, 1, 0.5}};
 
 int getBinId(int* binIds, int numBins, int binId);
 
@@ -491,12 +500,16 @@ PMAT * markObjsInImage(PMAT oriImg, PMAT objImg, int numObjsFound)
   int numMarkedObjs = 1;
   int label = 1;
   int left, top, right, bottom;
+  int totalArea;
+  int area;
   int numPx = 0;
   int labels[256] = {0};
   
   for(int i = 0; i < 257; i++) {
     objs[i] = 0;
   }
+  
+  totalArea = objImg->numberOfRows * objImg->numberOfColumns;
   
   objs[0] = createMatrixFromGn(oriImg);
   
@@ -568,6 +581,11 @@ PMAT * markObjsInImage(PMAT oriImg, PMAT objImg, int numObjsFound)
         }
       }
     }
+    
+    area = ((right - left) * (bottom - top));
+    
+    if(verboseLvl == 1)
+      printf("Label %d has area of %d \n", labels[label], area);
 
     /* If we have a at-least one pixel with the current label */
     if(numPx > 0) {
@@ -578,7 +596,7 @@ PMAT * markObjsInImage(PMAT oriImg, PMAT objImg, int numObjsFound)
        * of the object. i.e. w*h. Ignore the small
        * objects.
        */
-      if(numPx > ((oriImg->numberOfRows * oriImg->numberOfColumns) / 25)) {
+      if(area > (totalArea / 15)) {
         /* initialize the object */
         objs[numMarkedObjs] = createMatrixGnDataType((bottom - top) + 1, (right - left) + 1, MAT_UINT32);
     
@@ -614,7 +632,7 @@ PMAT * markObjsInImage(PMAT oriImg, PMAT objImg, int numObjsFound)
     
   }while(numObjs < numObjsFound);
   
-  printf("markObjsInImage numObjs:%d numMarkedObjs:%d\n", numObjs, numMarkedObjs);
+  printf("markObjsInImage numObjs:%d numMarkedObjs:%d\n", numObjs, numMarkedObjs-1);
   
   return objs;
 }
@@ -656,7 +674,7 @@ PMAT markBoundaryInImage(PMAT img, float maxVal, POS center, int width, int heig
 {
   PMAT markedImg = createMatrixFromGn(img);
   
-  if(maxVal > 235) {
+  if(maxVal > 210) {
     if((center.x < (height / 2)) || (center.y < (width / 2))) {
       assert(0);
     }
@@ -677,4 +695,36 @@ PMAT markBoundaryInImage(PMAT img, float maxVal, POS center, int width, int heig
   }
   
   return markedImg;
+}
+
+PMAT sobelEdgeFilter(PMAT img)
+{
+  PMAT edgeImg = createMatrixFromGn(img);
+  PMAT eX = createMatrix(3, 3);
+  PMAT eY = createMatrix(3, 3);
+  float gxVal  = 0.0;
+  float gyVal  = 0.0; 
+  float avgVal = 0.0;
+  
+  initMatrix(eX, (void*)edgeX);
+  initMatrix(eY, (void*)edgeY);
+  
+  PMAT gx = imfilter(img, eX, CORRELATION_OPERATION, MODE_REPLICATE);
+  PMAT gy = imfilter(img, eY, CORRELATION_OPERATION, MODE_REPLICATE);
+  
+  for(int i = 0; i < img->numberOfRows; i++) {
+      for(int j = 0; j < img->numberOfColumns; j++) {
+        gxVal = MAT(gx, i, j);
+        gyVal = MAT(gy, i, j);
+        avgVal = (float)sqrt((double)((gxVal * gxVal) + (gyVal * gyVal)));
+        MAT(edgeImg, i, j) = ((avgVal < 255)?(avgVal):(255));
+      }
+  }
+  
+  destroyMatrix(eX, "");
+  destroyMatrix(eY, "");
+  destroyMatrix(gx, "");
+  destroyMatrix(gy, "");
+
+  return edgeImg;
 }

@@ -55,6 +55,9 @@
       <compileType>
         <cTool>
           <standard>3</standard>
+          <preprocessorList>
+            <Elem>PC_SIMU</Elem>
+          </preprocessorList>
         </cTool>
         <ccTool>
           <standard>8</standard>
