@@ -23,5 +23,6 @@
 #define RUN_MODE_SEPERATE_OBJS   (2)
 #define RUN_MODE_FIND_GN_OBJ     (3)
 #define RUN_MODE_MARK_OBJS       (4)
+#define RUN_MODE_MARK_GN_OBJ     (5)
 
 #endif /* TEMPLATEMATCHING_H_ */

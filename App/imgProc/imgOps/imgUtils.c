@@ -674,7 +674,7 @@ PMAT markBoundaryInImage(PMAT img, float maxVal, POS center, int width, int heig
 {
   PMAT markedImg = createMatrixFromGn(img);
   
-  if(maxVal > 210) {
+  if(maxVal > 0) {
     if((center.x < (height / 2)) || (center.y < (width / 2))) {
       assert(0);
     }

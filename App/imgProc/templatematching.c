@@ -34,6 +34,8 @@ int main(int argc, char* argv[])
   int runMode = RUN_MODE_UNDEF;
   int err = 0;
   int runSeg = 0;
+  FILE* pMaxVal = NULL;
+  float maxStVal = 0.0;
 
   /* If enough inputs available */
 	if(argc >= 3) {
@@ -105,7 +107,8 @@ int main(int argc, char* argv[])
     } else {
       printf(" File couldn't be opened %s, err:%d\n", &argv[2][0], err);
     } 
-  }else if(runMode == RUN_MODE_FIND_GN_OBJ) {
+  }else if((runMode == RUN_MODE_FIND_GN_OBJ) ||
+           (runMode == RUN_MODE_MARK_GN_OBJ)) {
     int scaleFactor = 4;
     /* Search for the given object in the given scene */
     /* Open the given scene and filter BMP files  */
@@ -151,15 +154,44 @@ int main(int argc, char* argv[])
       int width  = scaledfilter->numberOfColumns * scaleFactor;
       int height = scaledfilter->numberOfRows * scaleFactor;
       
-      /* Mark the found boundary in the original image */
-      PMAT markedImg = markBoundaryInImage(oriImg, maxVal, matchPos, width, height);
-      sprintf(&opFileName[0], OP_PATH_PREFIX"markedImg_%02d.bmp", runSeg);
-      writeAsBMP(&opFileName[0], markedImg, &imageData[0]);
+      if(runMode == RUN_MODE_FIND_GN_OBJ) {
+        pMaxVal = fopen("maxValList.txt", "a+");
+        
+        if(pMaxVal != NULL) {
+          fprintf(pMaxVal, "%d %d\n", runSeg, (int)(maxVal * 100));
+          fclose(pMaxVal);
+        }
+      } else {
+        pMaxVal = fopen("maxValList.txt", "r");
+        
+        if(pMaxVal != NULL) {
+          int t1 = 0;
+          int t2 = 0;
+          while(fscanf(pMaxVal, "%d %d\n", &t1, &t2) > 0) {
+            if(maxStVal < (t2 / 100)) {
+              maxStVal = (t2 / 100);
+            }
+          }
+          printf("Max Stored Value %f\n", maxStVal);
+          fclose(pMaxVal);
+        }
+        
+        PMAT markedImg;
+        
+        if(maxVal >= maxStVal) {
+          /* Mark the found boundary in the original image */
+          markedImg = markBoundaryInImage(oriImg, maxVal, matchPos, width, height);
+        } else {
+          markedImg = markBoundaryInImage(oriImg, 0, matchPos, width, height);
+        }
+        sprintf(&opFileName[0], OP_PATH_PREFIX"markedImg_%02d.bmp", runSeg);
+        writeAsBMP(&opFileName[0], markedImg, &imageData[0]);
+        destroyMatrix(markedImg, "");
+      }
       
       destroyMatrix(scaledScene, "scene");
       destroyMatrix(scaledfilter, "filter");
       destroyMatrix(result, "result");
-      destroyMatrix(markedImg, "");
             
 #if ((defined _WIN32) || (defined _WIN64) || (defined CYGWIN))
       system("cygstart "OP_PATH_PREFIX"markedImg.bmp");

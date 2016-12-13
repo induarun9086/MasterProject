@@ -33,10 +33,27 @@ else:
   print '<br />Available input files: '
   print files
   print '<br />'
+  
+  try:
+    os.remove("maxValList.txt")
+  except OSError:
+      pass
+      
   idx = 0
   for file in files:
     PIPE = subprocess.PIPE
     pd = subprocess.Popen(['/home/pi/App/imgProc/bin/imgProc', '3', str(idx), file, form["ob"].value],
+                           stdout=PIPE, stderr=PIPE)
+    idx += 1
+    while True:
+        output = pd.stdout.read(1)
+        if output == '' and pd.poll() != None:
+          break
+          
+  idx = 0
+  for file in files:
+    PIPE = subprocess.PIPE
+    pd = subprocess.Popen(['/home/pi/App/imgProc/bin/imgProc', '5', str(idx), file, form["ob"].value],
                            stdout=PIPE, stderr=PIPE)
     idx += 1
     while True:
